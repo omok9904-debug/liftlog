@@ -13,8 +13,8 @@ function formatDate(iso: string) {
 
 export default function WeightTable({ entries, onEdit, onDelete }: WeightTableProps) {
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', minWidth: 420, borderCollapse: 'separate', borderSpacing: 0 }}>
+    <div style={{ overflowX: 'hidden' }}>
+      <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, tableLayout: 'fixed' }}>
         <thead>
           <tr>
             <th style={{ textAlign: 'left', fontSize: 12, color: 'var(--text-muted)', padding: '10px 12px' }}>Date</th>
@@ -28,13 +28,16 @@ export default function WeightTable({ entries, onEdit, onDelete }: WeightTablePr
               <td style={{ padding: '12px', borderTop: '1px solid var(--border)', color: 'var(--text)' }}>{formatDate(e.date)}</td>
               <td style={{ padding: '12px', borderTop: '1px solid var(--border)', color: 'var(--text)' }}>{e.weight}</td>
               <td style={{ padding: '12px', borderTop: '1px solid var(--border)', textAlign: 'right' }}>
-                <div style={{ display: 'inline-flex', gap: 8 }}>
+                <div style={{ display: 'inline-flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   <button
                     type="button"
                     onClick={() => onEdit(e)}
                     style={{
-                      height: 34,
-                      padding: '0 10px',
+                      height: 40,
+                      padding: '0 12px',
+                      minWidth: 72,
+                      fontSize: 13,
+                      lineHeight: '40px',
                       borderRadius: 10,
                       border: '1px solid var(--border)',
                       background: 'var(--surface)',
@@ -48,8 +51,11 @@ export default function WeightTable({ entries, onEdit, onDelete }: WeightTablePr
                     type="button"
                     onClick={() => onDelete(e)}
                     style={{
-                      height: 34,
-                      padding: '0 10px',
+                      height: 40,
+                      padding: '0 12px',
+                      minWidth: 72,
+                      fontSize: 13,
+                      lineHeight: '40px',
                       borderRadius: 10,
                       border: '1px solid var(--border)',
                       background: 'transparent',

@@ -2,11 +2,25 @@
   display: grid;
   gap: 16px;
   align-items: start;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    'add'
+    'progress'
+    'history';
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
   .grid {
-    grid-template-columns: 340px 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'add progress'
+      'history history';
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: 360px 1fr;
   }
 }
 
@@ -14,8 +28,51 @@
   border: 1px solid var(--border);
   background: var(--surface);
   border-radius: 14px;
-  padding: 16px;
+  padding: 14px;
   transition: background-color 220ms, border-color 220ms;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 16px;
+  }
+}
+
+.addCard {
+  grid-area: add;
+}
+
+.progressCard {
+  grid-area: progress;
+  --weight-chart-h: 220px;
+}
+
+.historyCard {
+  grid-area: history;
+}
+
+@media (min-width: 768px) {
+  .progressCard {
+    --weight-chart-h: 260px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .progressCard {
+    --weight-chart-h: 300px;
+  }
+}
+
+.historyScroll {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .historyScroll {
+    max-height: 46vh;
+  }
 }
 
 .cardTitle {

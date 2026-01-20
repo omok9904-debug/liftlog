@@ -194,7 +194,7 @@ export default function WeightTracker() {
       ) : null}
 
       <div className={styles.grid}>
-        <div className={styles.card}>
+        <div className={`${styles.card} ${styles.addCard}`}>
           <p className={styles.cardTitle}>{edit ? 'Edit entry' : 'Add entry'}</p>
           <WeightForm
             mode={edit ? 'edit' : 'create'}
@@ -205,26 +205,26 @@ export default function WeightTracker() {
           />
         </div>
 
-        <div className={styles.stack}>
-          <div className={styles.card}>
-            <p className={styles.cardTitle}>Progress</p>
-            {sortedEntries.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)', margin: 0 }}>No entries yet.</p>
-            ) : (
-              <WeightChart entries={sortedEntries} />
-            )}
-          </div>
+        <div className={`${styles.card} ${styles.progressCard}`}>
+          <p className={styles.cardTitle}>Progress</p>
+          {sortedEntries.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)', margin: 0 }}>No entries yet.</p>
+          ) : (
+            <WeightChart entries={sortedEntries} />
+          )}
+        </div>
 
-          <div className={styles.card}>
-            <p className={styles.cardTitle}>History</p>
-            {loading ? (
-              <p style={{ color: 'var(--text-muted)', margin: 0 }}>Loading…</p>
-            ) : sortedEntries.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)', margin: 0 }}>Add your first weigh-in to get started.</p>
-            ) : (
+        <div className={`${styles.card} ${styles.historyCard}`}>
+          <p className={styles.cardTitle}>History</p>
+          {loading ? (
+            <p style={{ color: 'var(--text-muted)', margin: 0 }}>Loading…</p>
+          ) : sortedEntries.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)', margin: 0 }}>Add your first weigh-in to get started.</p>
+          ) : (
+            <div className={styles.historyScroll}>
               <WeightTable entries={[...sortedEntries].reverse()} onEdit={startEdit} onDelete={requestDelete} />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 

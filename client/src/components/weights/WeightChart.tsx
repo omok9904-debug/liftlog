@@ -31,9 +31,9 @@ export default function WeightChart({ entries }: WeightChartProps) {
   }))
 
   return (
-    <div style={{ width: '100%', height: 280 }}>
+    <div style={{ width: '100%', height: 'var(--weight-chart-h, 280px)' }}>
       <ResponsiveContainer>
-        <AreaChart data={data} margin={{ top: 10, right: 14, bottom: 0, left: 0 }}>
+        <AreaChart data={data} margin={{ top: 10, right: 14, bottom: 8, left: 0 }}>
           <defs>
             <linearGradient id="llWeight" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={c.secondary} stopOpacity={0.35} />
@@ -46,7 +46,9 @@ export default function WeightChart({ entries }: WeightChartProps) {
             dataKey="date"
             tickFormatter={toChartLabel}
             tick={{ fill: c.textSecondary, fontSize: 12 }}
-            tickMargin={8}
+            tickMargin={6}
+            minTickGap={24}
+            interval="preserveStartEnd"
             axisLine={{ stroke: c.border, strokeOpacity: 0.5 }}
             tickLine={false}
           />
