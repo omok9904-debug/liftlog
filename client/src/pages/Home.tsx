@@ -1,10 +1,17 @@
 import PageContainer from '@/components/PageContainer'
+import WeightTracker from '@/components/weights/WeightTracker'
 
 export default function Home() {
   return (
     <PageContainer>
-      <h1>LiftLog – Workout Tracker</h1>
-      <p>Starter UI ready for workout form integration.</p>
+      <div style={{ display: 'grid', gap: 20 }}>
+        <div>
+          <h1>LiftLog – Workout Tracker</h1>
+          <p>Track your lifts and body weight over time.</p>
+        </div>
+
+        <WeightTracker />
+      </div>
     </PageContainer>
   )
 }

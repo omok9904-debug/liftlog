@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
 
 export type Theme = 'light' | 'dark'
 
@@ -20,7 +21,7 @@ function getInitialTheme(): Theme {
   return prefersDark ? 'dark' : 'light'
 }
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => getInitialTheme())
 
   useEffect(() => {
