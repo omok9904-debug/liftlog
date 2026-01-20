@@ -3,6 +3,7 @@ import { http } from '@/services/http'
 export type AuthUser = {
   id: string
   email: string
+  isAdmin?: boolean
 }
 
 type AuthResponse = {
@@ -21,14 +22,18 @@ type SignupPayload = {
   remember?: boolean
 }
 
+type VerifyAdminPayload = {
+  key: string
+}
+
 export const authService = {
   async signup(payload: SignupPayload) {
-    const res = await http.post<AuthResponse>('/auth/signup', payload)
+    const res = await http.post<AuthResponse>('/auth/signup', payload, { withCredentials: true })
     return res.data.user
   },
 
   async login(payload: LoginPayload) {
-    const res = await http.post<AuthResponse>('/auth/login', payload)
+    const res = await http.post<AuthResponse>('/auth/login', payload, { withCredentials: true })
     return res.data.user
   },
 
@@ -39,5 +44,9 @@ export const authService = {
   async me() {
     const res = await http.get<AuthResponse>('/auth/me')
     return res.data.user
+  },
+
+  async verifyAdmin(payload: VerifyAdminPayload) {
+    await http.post('/auth/admin/verify', { ...payload, remember: false })
   },
 }

@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 
 const workoutSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      index: true,
+    },
     exercise: {
       type: String,
       required: true,

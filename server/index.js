@@ -37,6 +37,8 @@ app.use('/auth', require('./routes/authRoutes'))
 const requireAuth = require('./middleware/requireAuth')
 app.use('/weights', requireAuth, require('./routes/weightRoutes'))
 
+app.use('/admin', require('./routes/adminRoutes'))
+
 app.get('/', (req, res) => {
   res.json({ message: 'LiftLog API running' })
 })

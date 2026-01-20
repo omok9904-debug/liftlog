@@ -1,12 +1,19 @@
 import PageContainer from '@/components/PageContainer'
 import AuthModal from '@/components/auth/AuthModal'
+import AdminAccessModal from '@/components/admin/AdminAccessModal'
+import AdminDashboardModal from '@/components/admin/AdminDashboardModal'
+import { useToast } from '@/components/toast/ToastProvider'
 import WeightTracker from '@/components/weights/WeightTracker'
 import { useAuth } from '@/context/AuthContext'
+import { authService } from '@/services/authService'
 import { useState } from 'react'
 
 export default function Home() {
-  const { user, loading, login, signup, logout } = useAuth()
+  const { user, loading, login, signup, logout, refresh } = useAuth()
+  const toast = useToast()
   const [authOpen, setAuthOpen] = useState(false)
+  const [adminAccessOpen, setAdminAccessOpen] = useState(false)
+  const [adminDashboardOpen, setAdminDashboardOpen] = useState(false)
 
   return (
     <PageContainer>
@@ -35,7 +42,11 @@ export default function Home() {
               </span>
               <button
                 type="button"
-                onClick={logout}
+                onClick={async () => {
+                  await logout()
+                  setAdminDashboardOpen(false)
+                  setAdminAccessOpen(false)
+                }}
                 style={{
                   height: 34,
                   padding: '0 12px',
@@ -47,6 +58,28 @@ export default function Home() {
                 }}
               >
                 Logout
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (user.isAdmin) {
+                    setAdminDashboardOpen(true)
+                    return
+                  }
+                  setAdminAccessOpen(true)
+                }}
+                style={{
+                  height: 34,
+                  padding: '0 12px',
+                  borderRadius: 10,
+                  border: '1px solid var(--border)',
+                  background: 'transparent',
+                  color: 'var(--text-muted)',
+                  cursor: 'pointer',
+                }}
+              >
+                Admin Access
               </button>
             </div>
           ) : (
@@ -92,6 +125,27 @@ export default function Home() {
         onClose={() => setAuthOpen(false)}
         onLogin={login}
         onSignup={signup}
+      />
+
+      <AdminAccessModal
+        open={adminAccessOpen}
+        onClose={() => setAdminAccessOpen(false)}
+        onVerify={async (key) => {
+          try {
+            await authService.verifyAdmin({ key })
+            await refresh()
+            setAdminAccessOpen(false)
+            setAdminDashboardOpen(true)
+            toast.success('Admin access granted')
+          } catch {
+            toast.error('Access denied', 'Unable to verify admin access.')
+          }
+        }}
+      />
+
+      <AdminDashboardModal
+        open={Boolean(user?.isAdmin) && adminDashboardOpen}
+        onClose={() => setAdminDashboardOpen(false)}
       />
     </PageContainer>
   )

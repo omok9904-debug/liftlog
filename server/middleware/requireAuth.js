@@ -9,7 +9,7 @@ function requireAuth(req, res, next) {
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = { id: payload.sub }
+    req.user = { id: payload.sub, isAdmin: Boolean(payload.isAdmin) }
 
     return next()
   } catch (err) {
