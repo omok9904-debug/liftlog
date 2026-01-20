@@ -1,5 +1,3 @@
-import { getApiBaseUrl } from '@/utils/env'
-
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 type RequestOptions = {
@@ -9,7 +7,7 @@ type RequestOptions = {
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const url = new URL(path, getApiBaseUrl())
+  const url = new URL(path, import.meta.env.VITE_API_URL)
 
   const res = await fetch(url, {
     method: options.method ?? 'GET',

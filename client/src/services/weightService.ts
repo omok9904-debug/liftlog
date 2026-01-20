@@ -1,6 +1,4 @@
 import axios from 'axios'
-
-import { getApiBaseUrl } from '@/utils/env'
 import type {
   BodyWeightCreatePayload,
   BodyWeightEntry,
@@ -13,7 +11,7 @@ type DeleteResponse = {
 }
 
 const http = axios.create({
-  baseURL: getApiBaseUrl(),
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 })
 

@@ -79,13 +79,13 @@ async function start() {
     }
 
     await mongoose.connect(MONGO_URI)
-    console.log('✅ MongoDB connected')
+    // console.log('✅ MongoDB connected')
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`)
+      // console.log(`🚀 Server running on port ${PORT}`)
     })
   } catch (err) {
-    console.error('❌ Startup error:', err && err.message ? err.message : err)
+    // console.error('❌ Startup error:', err && err.message ? err.message : err)
     process.exit(1)
   }
 }
