@@ -1,7 +1,14 @@
 import Home from '@/pages/Home'
+import ThemeToggle from '@/components/ThemeToggle'
+import { ThemeProvider } from '@/context/ThemeContext'
 
 function App() {
-  return <Home />
+  return (
+    <ThemeProvider>
+      <ThemeToggle />
+      <Home />
+    </ThemeProvider>
+  )
 }
 
 export default App
