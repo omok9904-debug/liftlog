@@ -65,8 +65,30 @@ async function createWeight(req, res) {
 
 async function getWeights(req, res) {
   try {
-    const weights = await Weight.find({ userId: req.user.id }).sort({ date: 1 })
-    return res.json(weights)
+    const rawPage = req.query?.page
+    const rawLimit = req.query?.limit
+
+    const hasPagination = rawPage !== undefined || rawLimit !== undefined
+    if (!hasPagination) {
+      const weights = await Weight.find({ userId: req.user.id }).sort({ date: 1 })
+      return res.json(weights)
+    }
+
+    const page = Math.max(1, Number.parseInt(String(rawPage ?? '1'), 10) || 1)
+    const limit = Math.min(50, Math.max(1, Number.parseInt(String(rawLimit ?? '10'), 10) || 10))
+
+    const filter = { userId: req.user.id }
+    const totalCount = await Weight.countDocuments(filter)
+    const totalPages = Math.max(1, Math.ceil(totalCount / limit))
+    const safePage = Math.min(page, totalPages)
+    const skip = (safePage - 1) * limit
+
+    const data = await Weight.find(filter)
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit)
+
+    return res.json({ data, totalCount, totalPages, page: safePage, limit })
   } catch (error) {
     return res.status(500).json({ message: 'Failed to fetch weight entries' })
   }

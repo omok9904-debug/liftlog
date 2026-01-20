@@ -49,11 +49,14 @@ export default function WeightTracker() {
   const c = COLORS(theme)
   const toast = useToast()
 
+  const PAGE_SIZE = 10
+
   const [entries, setEntries] = useState<BodyWeightEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [edit, setEdit] = useState<EditState | null>(null)
   const [pendingDelete, setPendingDelete] = useState<BodyWeightEntry | null>(null)
   const [pendingUpdate, setPendingUpdate] = useState<BodyWeightCreatePayload | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     let mounted = true
@@ -64,6 +67,7 @@ export default function WeightTracker() {
         const data = await weightService.getAll()
         if (!mounted) return
         setEntries(data)
+        setCurrentPage(1)
       } catch (e) {
         if (!mounted) return
         toast.error('Could not load weights', 'Please refresh and try again.')
@@ -83,6 +87,31 @@ export default function WeightTracker() {
   const sortedEntries = useMemo(() => {
     return [...entries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
   }, [entries])
+
+  const historyEntriesLatestFirst = useMemo(() => {
+    return [...sortedEntries].reverse()
+  }, [sortedEntries])
+
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(historyEntriesLatestFirst.length / PAGE_SIZE))
+  }, [PAGE_SIZE, historyEntriesLatestFirst.length])
+
+  const safePage = useMemo(() => {
+    return Math.min(Math.max(1, currentPage), totalPages)
+  }, [currentPage, totalPages])
+
+  const pagedHistoryEntries = useMemo(() => {
+    const start = (safePage - 1) * PAGE_SIZE
+    return historyEntriesLatestFirst.slice(start, start + PAGE_SIZE)
+  }, [PAGE_SIZE, historyEntriesLatestFirst, safePage])
+
+  const pageNumbers = useMemo(() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
+    const nums = new Set<number>([1, totalPages, safePage])
+    if (safePage - 1 > 1) nums.add(safePage - 1)
+    if (safePage + 1 < totalPages) nums.add(safePage + 1)
+    return Array.from(nums).sort((a, b) => a - b)
+  }, [safePage, totalPages])
 
   const needsTodayPrompt = useMemo(() => {
     const t = todayIso()
@@ -120,6 +149,7 @@ export default function WeightTracker() {
 
       setEntries((prev) => prev.map((e) => (e._id === tempId ? created : e)))
       toast.success('Weight added successfully')
+      setCurrentPage(1)
     } catch (e) {
       setEntries((prev) => prev.filter((e) => e._id !== tempId))
 
@@ -184,6 +214,10 @@ export default function WeightTracker() {
       await weightService.remove(entry._id)
       if (edit?.id === entry._id) setEdit(null)
       toast.success('Entry deleted')
+
+      const nextCount = previous.length - 1
+      const nextTotalPages = Math.max(1, Math.ceil(nextCount / PAGE_SIZE))
+      setCurrentPage((p) => Math.min(p, nextTotalPages))
     } catch (e) {
       setEntries(previous)
       toast.error('Failed to delete entry', 'Please try again.')
@@ -248,11 +282,60 @@ export default function WeightTracker() {
           <p className={styles.cardTitle}>History</p>
           {loading ? (
             <p style={{ color: 'var(--text-muted)', margin: 0 }}>Loading…</p>
-          ) : sortedEntries.length === 0 ? (
+          ) : historyEntriesLatestFirst.length === 0 ? (
             <p style={{ color: 'var(--text-muted)', margin: 0 }}>Add your first weigh-in to get started.</p>
           ) : (
-            <div className={styles.historyScroll}>
-              <WeightTable entries={[...sortedEntries].reverse()} onEdit={startEdit} onDelete={requestDelete} />
+            <div style={{ display: 'grid', gap: 10 }}>
+              <div className={styles.historyScroll}>
+                <div key={safePage} className={styles.historyPage}>
+                  <WeightTable entries={pagedHistoryEntries} onEdit={startEdit} onDelete={requestDelete} />
+                </div>
+              </div>
+
+              {totalPages > 1 ? (
+                <nav className={styles.pagination} aria-label="History pagination">
+                  <button
+                    type="button"
+                    className={styles.pageButton}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={safePage === 1}
+                    aria-label="Previous page"
+                  >
+                    Previous
+                  </button>
+
+                  <div className={styles.pageNumbers}>
+                    {pageNumbers.map((n, idx) => {
+                      const prev = pageNumbers[idx - 1]
+                      const showGap = prev !== undefined && n - prev > 1
+
+                      return (
+                        <div key={n} style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                          {showGap ? <span className={styles.ellipsis}>…</span> : null}
+                          <button
+                            type="button"
+                            className={`${styles.pageNumber} ${n === safePage ? styles.pageNumberActive : ''}`}
+                            onClick={() => setCurrentPage(n)}
+                            aria-current={n === safePage ? 'page' : undefined}
+                          >
+                            {n}
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.pageButton}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={safePage === totalPages}
+                    aria-label="Next page"
+                  >
+                    Next
+                  </button>
+                </nav>
+              ) : null}
             </div>
           )}
         </div>

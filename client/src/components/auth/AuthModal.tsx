@@ -255,7 +255,8 @@ export default function AuthModal({
           </button>
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={`${styles.formWrapper} ${mode === 'signup' ? styles.formWrapperScrollable : ''}`}>
+          <form className={styles.form} onSubmit={handleSubmit}>
           {mode === 'signup' ? (
             <div style={{ display: 'grid', gap: 10 }}>
               <div style={{ display: 'grid', gap: 6 }}>
@@ -426,7 +427,8 @@ export default function AuthModal({
               {mode === 'login' ? 'Sign up' : 'Log in'}
             </button>
           </p>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   )

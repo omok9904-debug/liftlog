@@ -69,6 +69,21 @@
   -webkit-overflow-scrolling: touch;
 }
 
+.historyPage {
+  animation: historyFade 160ms ease;
+}
+
+@keyframes historyFade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 767px) {
   .historyScroll {
     max-height: 46vh;
@@ -103,4 +118,72 @@
 .stack {
   display: grid;
   gap: 16px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pageNumbers {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ellipsis {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.pageButton {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 220ms, color 220ms, opacity 220ms;
+}
+
+.pageButton:active {
+  transform: scale(0.99);
+}
+
+.pageButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pageNumber {
+  height: 36px;
+  min-width: 36px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 220ms, border-color 220ms, color 220ms;
+}
+
+.pageNumber:active {
+  transform: scale(0.99);
+}
+
+.pageNumberActive {
+  background: rgba(79, 70, 229, 0.20);
+  border-color: rgba(79, 70, 229, 0.40);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .historyPage {
+    animation: none;
+  }
 }
