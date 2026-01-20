@@ -56,6 +56,8 @@
 
 .icon {
   width: 50%;
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -83,6 +85,7 @@
 
 .knob {
   position: absolute;
+  z-index: 1;
   top: 50%;
   left: var(--pad);
   width: var(--knob);
