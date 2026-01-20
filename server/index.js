@@ -6,11 +6,25 @@ require('dotenv').config()
 
 const app = express()
 
+app.set('trust proxy', 1)
+
 const PORT = process.env.PORT || 5050
 const MONGO_URI = process.env.MONGO_URI
 const JWT_SECRET = process.env.JWT_SECRET
 
-const allowedOrigins = new Set(['http://localhost:5173', 'http://127.0.0.1:5173'])
+function parseCsv(value) {
+  if (typeof value !== 'string') return []
+  return value
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean)
+}
+
+const allowedOrigins = new Set([
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  ...parseCsv(process.env.CORS_ORIGINS),
+])
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -43,6 +57,13 @@ app.get('/', (req, res) => {
   res.json({ message: 'LiftLog API running' })
 })
 
+app.use((err, req, res, next) => {
+  if (err?.message?.startsWith('CORS blocked for origin:')) {
+    return res.status(403).json({ message: err.message })
+  }
+  return next(err)
+})
+
 async function start() {
   try {
     if (!MONGO_URI) {
@@ -57,7 +78,7 @@ async function start() {
     console.log('✅ MongoDB connected')
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
+      console.log(`🚀 Server running on port ${PORT}`)
     })
   } catch (err) {
     console.error('❌ Startup error:', err && err.message ? err.message : err)

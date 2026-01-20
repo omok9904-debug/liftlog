@@ -8,10 +8,11 @@ const COOKIE_NAME = 'token'
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
 function setAuthCookie(res, token, remember = true) {
+  const isProd = process.env.NODE_ENV === 'production'
   const options = {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
     path: '/',
   }
 
@@ -23,10 +24,11 @@ function setAuthCookie(res, token, remember = true) {
 }
 
 function clearAuthCookie(res) {
+  const isProd = process.env.NODE_ENV === 'production'
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
     path: '/',
   })
 }
