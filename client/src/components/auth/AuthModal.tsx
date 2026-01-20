@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import styles from './AuthModal.module.css'
 import { checkPasswordRules, isValidEmail } from '@/utils/validation'
@@ -35,6 +35,8 @@ export default function AuthModal({
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [touched, setTouched] = useState({ firstName: false, lastName: false, email: false, password: false })
+  const prevHtmlOverflow = useRef<string>('')
+  const prevBodyOverflow = useRef<string>('')
 
   const title = useMemo(() => (mode === 'login' ? 'Welcome back' : 'Create your account'), [mode])
 
@@ -130,12 +132,23 @@ export default function AuthModal({
   useEffect(() => {
     if (!rendered) return
 
+    const html = document.documentElement
+    const body = document.body
+    prevHtmlOverflow.current = html.style.overflow
+    prevBodyOverflow.current = body.style.overflow
+    html.style.overflow = 'hidden'
+    body.style.overflow = 'hidden'
+
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
     }
 
     window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      html.style.overflow = prevHtmlOverflow.current
+      body.style.overflow = prevBodyOverflow.current
+    }
   }, [onClose, rendered])
 
   if (!rendered) return null
@@ -163,6 +176,16 @@ export default function AuthModal({
 
       onClose()
     } catch (err) {
+      const status = (err as any)?.response?.status
+      const data = (err as any)?.response?.data
+      const url = `${import.meta.env.VITE_API_URL}${mode === 'login' ? '/auth/login' : '/auth/signup'}`
+      console.error('[AuthModal] Auth request failed', {
+        mode,
+        url,
+        status,
+        data,
+      })
+
       const message =
         typeof (err as any)?.response?.data?.message === 'string'
           ? (err as any).response.data.message
@@ -170,8 +193,9 @@ export default function AuthModal({
             ? 'Incorrect email or password.'
             : 'Could not create account. Please try again.'
 
-      setError(message)
-      toast.error(mode === 'login' ? 'Login failed' : 'Signup failed', message)
+      const uiMessage = `${message}${typeof status === 'number' ? ` (HTTP ${status})` : ''}`
+      setError(uiMessage)
+      toast.error(mode === 'login' ? 'Login failed' : 'Signup failed', uiMessage)
     } finally {
       setSubmitting(false)
     }

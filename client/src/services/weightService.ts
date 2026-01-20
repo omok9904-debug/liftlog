@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { http } from '@/services/http'
 import type {
   BodyWeightCreatePayload,
   BodyWeightEntry,
@@ -9,11 +9,6 @@ type DeleteResponse = {
   message: string
   id: string
 }
-
-const http = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
-})
 
 export const weightService = {
   async getAll() {

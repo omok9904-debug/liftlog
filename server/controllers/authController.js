@@ -11,7 +11,7 @@ function setAuthCookie(res, token, remember = true) {
   const isProd = process.env.NODE_ENV === 'production'
   const options = {
     httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
+    sameSite: 'lax',
     secure: isProd,
     path: '/',
   }
@@ -27,7 +27,7 @@ function clearAuthCookie(res) {
   const isProd = process.env.NODE_ENV === 'production'
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    sameSite: isProd ? 'none' : 'lax',
+    sameSite: 'lax',
     secure: isProd,
     path: '/',
   })
@@ -111,6 +111,7 @@ async function signup(req, res) {
 
     return res.status(201).json({ user: publicUser(user, false), token })
   } catch (err) {
+    console.error(err)
     return res.status(500).json({ message: 'Failed to sign up' })
   }
 }
@@ -150,6 +151,7 @@ async function login(req, res) {
 
     return res.json({ user: publicUser(user, false), token })
   } catch (err) {
+    console.error(err)
     return res.status(500).json({ message: 'Failed to log in' })
   }
 }

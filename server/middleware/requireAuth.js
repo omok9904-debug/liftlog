@@ -13,7 +13,7 @@ function requireAuth(req, res, next) {
       return res.status(401).json({ message: 'Unauthorized' })
     }
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET). 
+    const payload = jwt.verify(token, process.env.JWT_SECRET?.trim())
     req.user = {
       id: payload.sub,
       isAdmin: Boolean(payload.isAdmin),
@@ -23,6 +23,19 @@ function requireAuth(req, res, next) {
 
     return next()
   } catch (err) {
+    try {
+      const header = req.headers?.authorization
+      const headerToken =
+        typeof header === 'string' && header.toLowerCase().startsWith('bearer ') ? header.slice(7).trim() : null
+      console.error('[requireAuth] Unauthorized', {
+        hasCookie: Boolean(req.cookies?.token),
+        hasHeader: Boolean(headerToken),
+        errorName: err?.name,
+        errorMessage: err?.message,
+      })
+    } catch {
+      // ignore
+    }
     return res.status(401).json({ message: 'Unauthorized' })
   }
 }
