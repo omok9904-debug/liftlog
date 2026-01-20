@@ -255,7 +255,7 @@ export default function AuthModal({
           </button>
         </div>
 
-        <div className={`${styles.formWrapper} ${mode === 'signup' ? styles.formWrapperScrollable : ''}`}>
+        <div className={styles.formWrapper}>
           <form className={styles.form} onSubmit={handleSubmit}>
           {mode === 'signup' ? (
             <div style={{ display: 'grid', gap: 10 }}>
@@ -407,27 +407,23 @@ export default function AuthModal({
           <button className={styles.primary} type="submit" disabled={submitting || !canSubmit}>
             {submitting ? 'Please wait…' : mode === 'login' ? 'Log in' : 'Sign up'}
           </button>
+          </form>
+        </div>
 
-          <p className={styles.helper}>
+        <div className={styles.footer}>
+          <p className={styles.footerText}>
             {mode === 'login' ? 'No account yet?' : 'Already have an account?'}{' '}
             <button
               type="button"
+              className={styles.linkButton}
               onClick={() => {
                 setMode(mode === 'login' ? 'signup' : 'login')
                 setError(null)
-              }}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'rgba(255, 255, 255, 0.92)',
-                cursor: 'pointer',
-                padding: 0,
               }}
             >
               {mode === 'login' ? 'Sign up' : 'Log in'}
             </button>
           </p>
-          </form>
         </div>
       </div>
     </div>

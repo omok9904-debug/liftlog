@@ -5,6 +5,7 @@
   display: grid;
   place-items: center;
   padding: 12px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
 
   background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(10px);
@@ -49,6 +50,7 @@ html[data-theme='dark'] .overlay {
 
   padding: 16px;
   max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -119,9 +121,6 @@ html[data-theme='dark'] .modal {
 
 .formWrapper {
   min-height: 0;
-}
-
-.formWrapperScrollable {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -145,6 +144,33 @@ html[data-theme='dark'] .modal {
 .form {
   display: grid;
   gap: 10px;
+}
+
+.footer {
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.footerText {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.linkButton {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 10px 8px;
+  margin: -10px -8px;
+  border-radius: 10px;
+}
+
+.linkButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.25);
 }
 
 .label {
@@ -322,5 +348,32 @@ html[data-theme='dark'] .input {
   .overlay,
   .modal {
     animation: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 12px;
+  }
+
+  .header {
+    margin-bottom: 10px;
+  }
+
+  .tabs {
+    margin-bottom: 10px;
+  }
+
+  .form {
+    gap: 8px;
+  }
+
+  .input {
+    height: 40px;
+  }
+
+  .footer {
+    padding-top: 8px;
+    margin-top: 8px;
   }
 }
