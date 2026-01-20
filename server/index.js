@@ -12,19 +12,7 @@ const PORT = process.env.PORT || 5050
 const MONGO_URI = process.env.MONGO_URI
 const JWT_SECRET = process.env.JWT_SECRET
 
-function parseCsv(value) {
-  if (typeof value !== 'string') return []
-  return value
-    .split(',')
-    .map((v) => v.trim())
-    .filter(Boolean)
-}
-
-const allowedOrigins = new Set([
-  'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  ...parseCsv(process.env.CORS_ORIGINS),
-])
+const allowedOrigins = new Set(['http://localhost:5173', 'https://liftlog-by-omkar.netlify.app'])
 
 const corsOptions = {
   origin: (origin, callback) => {
@@ -35,7 +23,7 @@ const corsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 204,
+  optionsSuccessStatus: 200,
 }
 
 app.use(cors(corsOptions))
