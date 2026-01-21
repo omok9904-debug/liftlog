@@ -68,7 +68,7 @@ Required for production deployment:
 - **`CORS_ORIGINS`**: comma-separated allowlist of frontend origins (include your Netlify URL)
 
 Optional:
-- **`MAX_SIGNUPS`**: limit signups (default `1`)
+- **`MAX_SIGNUPS`**: limit signups (default `10`)
 - **`ADMIN_SECRET_KEY`**: admin verification key
 
 Notes:
